@@ -19,8 +19,11 @@ class AddLocationForm(BoxLayout):
 
     def found_location(self, request, data):
         data = json.loads(data.decode()) if not isinstance(data, dict) else data
-        cities = ["{} ({})".format(d['name'], d['sys']['country'])
-                 for d in data['list']]
+        if 'list' in data:
+            cities = ["{} ({})".format(d['name'], d['sys']['country'])
+                     for d in data['list']]
+        else:
+            cities = []
         self.search_results.item_strings = cities
 
 
