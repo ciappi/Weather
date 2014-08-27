@@ -16,6 +16,7 @@ AddLocationForm:
     Button:
       text: "Current Location"
       size_hint_x: 25
+      on_press: root.search_coordinates()
   ListView:
     id: search_results_list
     item_strings: []
