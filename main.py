@@ -6,6 +6,10 @@ from kivy.properties import ObjectProperty
 from kivy.network.urlrequest import UrlRequest
 
 
+class WeatherRoot(BoxLayout):
+    pass
+
+
 class AddLocationForm(BoxLayout):
 
     search_input = ObjectProperty()
