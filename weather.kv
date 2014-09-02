@@ -1,3 +1,7 @@
+#: import main main
+#: import ListAdapter kivy.adapters.listadapter.ListAdapter
+
+
 WeatherRoot:
 
 <WeatherRoot>:
@@ -24,4 +28,5 @@ WeatherRoot:
       on_press: root.search_coordinates()
   ListView:
     id: search_results_list
-    item_strings: []
+    adapter:
+      ListAdapter(data=[], cls=main.LocationButton)

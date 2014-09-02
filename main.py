@@ -2,11 +2,16 @@ import json
 
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.listview import ListItemButton
 from kivy.properties import ObjectProperty
 from kivy.network.urlrequest import UrlRequest
 
 
 class WeatherRoot(BoxLayout):
+    pass
+
+
+class LocationButton(ListItemButton):
     pass
 
 
@@ -41,6 +46,9 @@ class AddLocationForm(BoxLayout):
         else:
             cities = []
         self.search_results.item_strings = cities
+        self.search_results.adapter.data.clear()
+        self.search_results.adapter.data.extend(cities)
+        self.search_results._trigger_reset_populate()
 
 
 class WeatherApp(App):
