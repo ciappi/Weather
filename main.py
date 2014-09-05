@@ -7,12 +7,15 @@ from kivy.properties import ObjectProperty
 from kivy.network.urlrequest import UrlRequest
 
 
-class WeatherRoot(BoxLayout):
-    pass
-
-
 class LocationButton(ListItemButton):
     pass
+
+
+class WeatherRoot(BoxLayout):
+    def show_current_weather(self, location):
+        from kivy.uix.label import Label
+        self.clear_widgets()
+        self.add_widget(Label(text=location))
 
 
 class AddLocationForm(BoxLayout):
