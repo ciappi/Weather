@@ -3,13 +3,13 @@ import json
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.listview import ListItemButton
-from kivy.properties import ObjectProperty
+from kivy.properties import ObjectProperty, ListProperty
 from kivy.network.urlrequest import UrlRequest
 from kivy.factory import Factory
 
 
 class LocationButton(ListItemButton):
-    pass
+    location = ListProperty()
 
 
 class WeatherRoot(BoxLayout):
@@ -19,7 +19,7 @@ class WeatherRoot(BoxLayout):
     def show_current_weather(self, location=None):
         self.clear_widgets()
         if location is None and self.current_weather is None:
-            location = "New York (US)"
+            location = ("New York", "US")
         if location is not None:
             self.current_weather = Factory.CurrentWeather()
             self.current_weather.location = location
@@ -34,6 +34,10 @@ class AddLocationForm(BoxLayout):
 
     search_input = ObjectProperty()
     search_results = ObjectProperty()
+
+    def args_converter(self, index, data_item):
+        city, country = data_item
+        return {'location': (city, country)}
 
     def search_location(self):
         search_template = ("http://api.openweathermap.org/data/2.5/" +
@@ -56,7 +60,7 @@ class AddLocationForm(BoxLayout):
     def found_location(self, request, data):
         data = json.loads(data.decode()) if not isinstance(data, dict) else data
         if 'list' in data:
-            cities = ["{} ({})".format(d['name'], d['sys']['country'])
+            cities = [(d['name'], d['sys']['country'])
                      for d in data['list']]
         else:
             cities = []
