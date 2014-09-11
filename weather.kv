@@ -36,3 +36,23 @@ WeatherRoot:
         adapter:
             ListAdapter(data=[], cls=main.LocationButton)
 
+
+<CurrentWeather@BoxLayout>:
+    location: ""
+    conditions: None
+    temp: None
+    temp_min: None
+    temp_max: None
+    orientation: "vertical"
+    Label:
+        text: root.location
+    BoxLayout:
+        orientation: "horizontal"
+        size_hint_y: None
+        height: "40dp"
+        Button:
+            text: "Add location"
+            on_press: app.root.show_add_location_form()
+        Button:
+            text: "Forecast"
+
