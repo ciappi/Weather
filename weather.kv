@@ -9,6 +9,15 @@ WeatherRoot:
     AddLocationForm
 
 
+<Locations@BoxLayout>:
+    orientation: "vertical"
+    locations_list: locations_list
+    ListView:
+        id: locations_list
+        adapter:
+            ListAdapter(data=[], cls=main.LocationButton, args_converter=main.locations_args_converter)
+
+
 <LocationButton>:
     text: "{} ({})".format(self.location[0], self.location[1])
     height: "40dp"
@@ -40,7 +49,7 @@ WeatherRoot:
     ListView:
         id: search_results_list
         adapter:
-            ListAdapter(data=[], cls=main.LocationButton, args_converter=root.args_converter)
+            ListAdapter(data=[], cls=main.LocationButton, args_converter=main.locations_args_converter)
     Button:
         height: "40dp"
         size_hint_y: None
@@ -68,6 +77,9 @@ WeatherRoot:
         orientation: "horizontal"
         size_hint_y: None
         height: "40dp"
+        Button:
+            text: "Locations"
+            on_press: app.root.show_locations()
         Button:
             text: "Add location"
             on_press: app.root.show_add_location_form()

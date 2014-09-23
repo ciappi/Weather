@@ -5,6 +5,13 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.listview import ListItemButton
 from kivy.properties import ObjectProperty, ListProperty, StringProperty, NumericProperty
 from kivy.network.urlrequest import UrlRequest
+from kivy.storage.jsonstore import JsonStore
+from kivy.factory import Factory
+
+
+def locations_args_converter(index, data_item):
+    city, country = data_item
+    return {'location': (city, country)}
 
 
 class LocationButton(ListItemButton):
@@ -14,13 +21,34 @@ class LocationButton(ListItemButton):
 class WeatherRoot(BoxLayout):
 
     current_weather = ObjectProperty()
+    locations = ObjectProperty()
+
+    def __init__(self, **kargs):
+        super(WeatherRoot, self).__init__(**kargs)
+        self.store = JsonStore("wheater_store.json")
+        if (self.store.exists('locations')):
+            current_location = self.store.get('locations')['current_location']
+            self.show_current_weather(current_location)
+
+    def show_locations(self):
+        self.clear_widgets()
+        self.add_widget(self.locations)
 
     def show_current_weather(self, location=None):
         self.clear_widgets()
         if self.current_weather is None:
             self.current_weather = CurrentWeather()
+        if self.locations is None:
+            self.locations = Factory.Locations()
+            if (self.store.exists('locations')):
+                locations = self.store.get('locations')['locations']
+                self.locations.locations_list.adapter.data.extend(locations)
         if location is not None:
             self.current_weather.location = location
+            if location not in self.locations.locations_list.adapter.data:
+                self.locations.locations_list.adapter.data.append(location)
+                self.locations.locations_list._trigger_reset_populate()
+                self.store.put("locations", locations=list(self.locations.locations_list.adapter.data), current_location=location)
         self.current_weather.update_weather()
         self.add_widget(self.current_weather)
 
@@ -33,10 +61,6 @@ class AddLocationForm(BoxLayout):
 
     search_input = ObjectProperty()
     search_results = ObjectProperty()
-
-    def args_converter(self, index, data_item):
-        city, country = data_item
-        return {'location': (city, country)}
 
     def search_location(self):
         search_template = ("http://api.openweathermap.org/data/2.5/" +
