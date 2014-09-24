@@ -16,6 +16,11 @@ WeatherRoot:
         id: locations_list
         adapter:
             ListAdapter(data=[], cls=main.LocationButton, args_converter=main.locations_args_converter)
+    Button:
+        height: "40dp"
+        size_hint_y: None
+        text: "Settings"
+        on_press: app.open_settings()
 
 
 <LocationButton>:

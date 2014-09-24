@@ -101,9 +101,12 @@ class CurrentWeather(BoxLayout):
     temp_max = NumericProperty()
 
     def update_weather(self):
+        config = WeatherApp.get_running_app().config
+        temp_type = config.getdefault("General", "temp_type", "metric").lower()
         weather_template = ("http://api.openweathermap.org/data/2.5/" +
-            "weather?q={},{}&units=metric")
-        weather_url = weather_template.format(*self.location)
+            "weather?q={},{}&units={}")
+        weather_url = weather_template.format(self.location[0],
+                self.location[1], temp_type)
         request = UrlRequest(weather_url, self.weather_retrived)
 
     def weather_retrived(self, request, data):
@@ -115,7 +118,25 @@ class CurrentWeather(BoxLayout):
 
 
 class WeatherApp(App):
-    pass
+    def build_config(self, config):
+        config.setdefaults('General', {'temp_type': 'Metric'})
+
+    def build_settings(self, settings):
+        settings.add_json_panel("Weather Settings", self.config, data="""
+[
+    {"type": "options",
+     "title": "Temperature System",
+     "section": "General",
+     "key": "temp_type",
+     "options": ["Metric", "Imperial"]}
+]""")
+
+    def on_config_change(self, config, section, key, value):
+        if config is self.config and key == "temp_type":
+            try:
+                self.root.children[0].update_weather()
+            except AttributeError:
+                pass
 
 
 if __name__ == '__main__':
