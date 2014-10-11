@@ -110,7 +110,7 @@ class CurrentWeather(BoxLayout):
         request = UrlRequest(weather_url, self.weather_retrived)
 
     def weather_retrived(self, request, data):
-        data = json.loads(data.decode() if not isinstance(data, dict) else data)
+        data = json.loads(data.decode()) if not isinstance(data, dict) else data
         self.conditions = data['weather'][0]['description']
         self.temp = data['main']['temp']
         self.temp_min = data['main']['temp_min']
