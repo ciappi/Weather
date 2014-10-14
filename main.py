@@ -9,6 +9,8 @@ from kivy.network.urlrequest import UrlRequest
 from kivy.storage.jsonstore import JsonStore
 from kivy.factory import Factory
 
+from gesture_box import GestureBox
+
 
 def locations_args_converter(index, data_item):
     city, country = data_item
@@ -104,7 +106,7 @@ class AddLocationForm(BoxLayout):
         self.search_results._trigger_reset_populate()
 
 
-class CurrentWeather(BoxLayout):
+class CurrentWeather(GestureBox):
     location = ListProperty(['New York', 'US'])
     conditions = StringProperty()
     temp = NumericProperty()
@@ -150,7 +152,7 @@ class WeatherApp(App):
                 pass
 
 
-class Forecast(BoxLayout):
+class Forecast(GestureBox):
     location = ListProperty(['New York', 'US'])
     forecast_container = ObjectProperty()
     
