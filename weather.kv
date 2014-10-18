@@ -28,20 +28,24 @@ WeatherRoot:
                 ActionToggleButton:
                     text: "Locations"
                     group: "pages"
+                    allow_no_selection: False
                     state: "down" if root.carousel.index == 0 else "normal"
                     on_press: app.root.carousel.load_slide(app.root.locations)
                 ActionToggleButton:
                     text: "Current"
                     group: "pages"
+                    allow_no_selection: False
                     state: "down" if root.carousel.index == 1 else "normal"
                     on_press: app.root.carousel.load_slide(app.root.current_weather)
                 ActionToggleButton:
                     text: "Forecast"
                     group: "pages"
+                    allow_no_selection: False
                     state: "down" if root.carousel.index == 2 else "normal"
                     on_press: app.root.carousel.load_slide(app.root.forecast)
         Carousel:
             id: carousel
+            index: 1
             Locations:
                 id: locations
             CurrentWeather:
