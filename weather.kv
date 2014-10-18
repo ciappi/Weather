@@ -96,7 +96,7 @@ WeatherRoot:
     text: "{} ({})".format(self.location[0], self.location[1])
     height: "40dp"
     size_hint_y: None 
-    on_press: app.root.show_current_weather(self.location)
+    on_press: app.root.change_location(self.location)
 
 
 <AddLocationForm>:

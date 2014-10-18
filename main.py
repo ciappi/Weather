@@ -36,11 +36,11 @@ class WeatherRoot(BoxLayout):
             locations = self.store.get('locations')
             self.locations.locations_list.adapter.data.extend(locations['locations'])
             current_location = locations['current_location']
-            self.show_current_weather(current_location)
+            self.change_location(current_location)
         else:
             Clock.schedule_once(lambda dt: self.show_add_location_form())
 
-    def show_current_weather(self, location=None):
+    def change_location(self, location=None):
         if location is not None:
             self.current_weather.location = location
             if location not in self.locations.locations_list.adapter.data:
