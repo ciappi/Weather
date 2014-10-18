@@ -6,7 +6,42 @@ WeatherRoot:
 
 
 <WeatherRoot>:
-    AddLocationForm
+    carousel: carousel
+    locations: locations
+    current_weather: current_weather
+    forecast: forecast
+    BoxLayout:
+        orientation: "vertical"
+        ActionBar:
+            ActionView:
+                use_separator: True
+                ActionPrevious:
+                    title: "Kivy Weather"
+                    with_previous: False
+                ActionOverflow:
+                    ActionButton:
+                        text: "Add Location"
+                        on_press: app.root.show_add_location_form()
+                    ActionButton:
+                        text: "Settings"
+                        on_press: app.open_settings()
+                ActionButton:
+                    text: "Locations"
+                    on_press: app.root.carousel.load_slide(app.root.locations)
+                ActionButton:
+                    text: "Current"
+                    on_press: app.root.carousel.load_slide(app.root.current_weather)
+                ActionButton:
+                    text: "Forecast"
+                    on_press: app.root.carousel.load_slide(app.root.forecast)
+        Carousel:
+            id: carousel
+            Locations:
+                id: locations
+            CurrentWeather:
+                id: current_weather
+            Forecast:
+                id: forecast
 
 
 <ForecastLabel@BoxLayout>:
@@ -39,8 +74,6 @@ WeatherRoot:
 <Forecast>:
     forecast_container: forecast_container
     orientation: "vertical"
-    on_left_to_right_line: app.root.show_current_weather(root.location)
-    on_bottom_to_top_line: root.update_weather()
     Label:
         size_hint_y: 0.1
         font_size: "30dp"
@@ -48,13 +81,6 @@ WeatherRoot:
     BoxLayout:
         orientation: "vertical"
         id: forecast_container
-    BoxLayout:
-        orientation: "horizontal"
-        size_hint_y: None
-        height: "40dp"
-        Button:
-            text: "Current"
-            on_press: app.root.show_current_weather(root.location)
 
 
 <Locations@BoxLayout>:
@@ -64,11 +90,6 @@ WeatherRoot:
         id: locations_list
         adapter:
             ListAdapter(data=[], cls=main.LocationButton, args_converter=main.locations_args_converter)
-    Button:
-        height: "40dp"
-        size_hint_y: None
-        text: "Settings"
-        on_press: app.open_settings()
 
 
 <LocationButton>:
@@ -79,41 +100,40 @@ WeatherRoot:
 
 
 <AddLocationForm>:
-    orientation: "vertical"
     search_input: search_box
     search_results: search_results_list
     BoxLayout:
-        height: "40dp"
-        size_hint_y: None
-        TextInput:
-            id: search_box
-            size_hint_x: 50
-            focus: True
-            multiline: False
-            on_text_validate: root.search_location()
+        orientation: "vertical"
+        BoxLayout:
+            height: "40dp"
+            size_hint_y: None
+            TextInput:
+                id: search_box
+                size_hint_x: 50
+                focus: True
+                multiline: False
+                on_text_validate: root.search_location()
+            Button:
+                text: "Search"
+                size_hint_x: 25
+                on_press: root.search_location()
+            Button:
+                text: "Current Location"
+                size_hint_x: 25
+                on_press: root.search_coordinates()
+        ListView:
+            id: search_results_list
+            adapter:
+                ListAdapter(data=[], cls=main.LocationButton, args_converter=main.locations_args_converter)
         Button:
-            text: "Search"
-            size_hint_x: 25
-            on_press: root.search_location()
-        Button:
-            text: "Current Location"
-            size_hint_x: 25
-            on_press: root.search_coordinates()
-    ListView:
-        id: search_results_list
-        adapter:
-            ListAdapter(data=[], cls=main.LocationButton, args_converter=main.locations_args_converter)
-    Button:
-        height: "40dp"
-        size_hint_y: None
-        text: "Cancel"
-        on_press: app.root.show_current_weather(None)
+            height: "40dp"
+            size_hint_y: None
+            text: "Cancel"
+            on_press: root.dismiss()
 
 
 <CurrentWeather>:
     orientation: "vertical"
-    on_right_to_left_line: app.root.show_forecast(root.location)
-    on_bottom_to_top_line: root.update_weather()
     BoxLayout:
         Label:
             text: "{} ({})".format(root.location[0], root.location[1])
@@ -128,17 +148,4 @@ WeatherRoot:
             text: "Low: {}".format(root.temp_min)
         Label:
             text: "High: {}".format(root.temp_max)
-    BoxLayout:
-        orientation: "horizontal"
-        size_hint_y: None
-        height: "40dp"
-        Button:
-            text: "Locations"
-            on_press: app.root.show_locations()
-        Button:
-            text: "Add location"
-            on_press: app.root.show_add_location_form()
-        Button:
-            text: "Forecast"
-            on_press: app.root.show_forecast(root.location)
 
