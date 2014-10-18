@@ -11,6 +11,8 @@ from kivy.storage.jsonstore import JsonStore
 from kivy.factory import Factory
 from kivy.uix.modalview import ModalView
 
+__version__ = "0.1"
+
 
 def locations_args_converter(index, data_item):
     city, country = data_item
@@ -91,7 +93,10 @@ class AddLocationForm(ModalView):
         else:
             cities = []
         self.search_results.item_strings = cities
-        self.search_results.adapter.data.clear()
+        try:
+            self.search_results.adapter.data.clear()
+        except AttributeError:
+            self.search_results.adapter.data = []
         self.search_results.adapter.data.extend(cities)
         self.search_results._trigger_reset_populate()
 
