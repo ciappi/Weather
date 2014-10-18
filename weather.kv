@@ -25,14 +25,18 @@ WeatherRoot:
                     ActionButton:
                         text: "Settings"
                         on_press: app.open_settings()
-                ActionButton:
+                ActionToggleButton:
                     text: "Locations"
+                    group: "pages"
                     on_press: app.root.carousel.load_slide(app.root.locations)
-                ActionButton:
+                ActionToggleButton:
                     text: "Current"
+                    group: "pages"
+                    state: "down"
                     on_press: app.root.carousel.load_slide(app.root.current_weather)
-                ActionButton:
+                ActionToggleButton:
                     text: "Forecast"
+                    group: "pages"
                     on_press: app.root.carousel.load_slide(app.root.forecast)
         Carousel:
             id: carousel
