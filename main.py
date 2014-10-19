@@ -128,6 +128,9 @@ class CurrentWeather(BoxLayout):
 class WeatherApp(App):
     def build_config(self, config):
         config.setdefaults('General', {'temp_type': 'Metric'})
+        
+    def on_pause(self):
+        return True
 
     def build_settings(self, settings):
         settings.add_json_panel("Weather Settings", self.config, data="""
