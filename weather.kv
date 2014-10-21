@@ -7,51 +7,8 @@ WeatherRoot:
 
 <WeatherRoot>:
     carousel: carousel
-    locations: locations
-    current_weather: current_weather
-    forecast: forecast
-    BoxLayout:
-        orientation: "vertical"
-        ActionBar:
-            ActionView:
-                use_separator: True
-                ActionPrevious:
-                    title: "Kivy Weather"
-                    with_previous: False
-                ActionOverflow:
-                    ActionButton:
-                        text: "Add Location"
-                        on_press: app.root.show_add_location_form()
-                    ActionButton:
-                        text: "Settings"
-                        on_press: app.open_settings()
-                ActionToggleButton:
-                    text: "Locations"
-                    group: "pages"
-                    allow_no_selection: False
-                    state: "down" if root.carousel.index == 0 else "normal"
-                    on_press: app.root.carousel.load_slide(app.root.locations)
-                ActionToggleButton:
-                    text: "Current"
-                    group: "pages"
-                    allow_no_selection: False
-                    state: "down" if root.carousel.index == 1 else "normal"
-                    on_press: app.root.carousel.load_slide(app.root.current_weather)
-                ActionToggleButton:
-                    text: "Forecast"
-                    group: "pages"
-                    allow_no_selection: False
-                    state: "down" if root.carousel.index == 2 else "normal"
-                    on_press: app.root.carousel.load_slide(app.root.forecast)
-        Carousel:
-            id: carousel
-            index: 1
-            Locations:
-                id: locations
-            CurrentWeather:
-                id: current_weather
-            Forecast:
-                id: forecast
+    Carousel:
+        id: carousel
 
 
 <ForecastLabel@BoxLayout>:
@@ -159,3 +116,38 @@ WeatherRoot:
         Label:
             text: "High: {}".format(root.temp_max)
 
+
+<WeatherPage>:
+    orientation: "vertical"
+    forecast_panel: forecast_panel
+    canvas.before:
+        Color:
+            rgb: [.8, .6, .2]
+        Rectangle:
+            size: self.size
+            pos: self.pos
+    Label:
+        text: "{} ({})".format(root.location[0], root.location[1])
+        font_size: "50dp"
+    Image:
+        source: "Cloud-Fog.png"
+    Label:
+        text: "{:.0f}".format(root.temp)
+        font_size: "80dp"
+    BoxLayout:
+        id: forecast_panel
+        orientation: "horizontal"
+    
+
+
+<ForecastBox@BoxLayout>:
+    orientation: "vertical"
+    temp_day: 0
+    conditions_image: ""
+    date: ""
+    Label:
+        text: "{}".format(root.date)
+    AsyncImage:
+        source: root.conditions_image
+    Label:
+        text: "{:.0f}".format(root.temp_day)

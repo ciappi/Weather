@@ -11,6 +11,7 @@ from kivy.storage.jsonstore import JsonStore
 from kivy.factory import Factory
 from kivy.uix.modalview import ModalView
 
+
 __version__ = "0.1"
 
 
@@ -26,40 +27,39 @@ class LocationButton(ListItemButton):
 class WeatherRoot(BoxLayout):
 
     carousel = ObjectProperty()
-    current_weather = ObjectProperty()
-    locations = ObjectProperty()
-    forecast = ObjectProperty()
-    add_location_form = ObjectProperty()
+#    add_location_form = ObjectProperty()
 
     def __init__(self, **kargs):
         super(WeatherRoot, self).__init__(**kargs)
         self.store = JsonStore("weather_store.json")
         if self.store.exists('locations'):
             locations = self.store.get('locations')
-            self.locations.locations_list.adapter.data.extend(locations['locations'])
-            current_location = locations['current_location']
-            self.change_location(current_location)
-        else:
-            Clock.schedule_once(lambda dt: self.show_add_location_form())
+#            current_location = locations['current_location']
+#            self.change_location(current_location)
+            for location in locations['locations']:
+                self.carousel.add_widget(WeatherPage(location))
+            self.carousel.index = 0
+#        else:
+#            Clock.schedule_once(lambda dt: self.show_add_location_form())
 
-    def change_location(self, location=None):
-        if location is not None:
-            self.current_weather.location = location
-            if location not in self.locations.locations_list.adapter.data:
-                self.locations.locations_list.adapter.data.append(location)
-                self.locations.locations_list._trigger_reset_populate()
-                self.store.put("locations", locations=list(self.locations.locations_list.adapter.data), current_location=location)
-        self.current_weather.location = location
-        self.forecast.location = location
-        self.current_weather.update_weather()
-        self.forecast.update_weather()
-        self.carousel.load_slide(self.current_weather)
-        if self.add_location_form is not None:
-            self.add_location_form.dismiss()
+#    def change_location(self, location=None):
+#        if location is not None:
+#            self.current_weather.location = location
+#            if location not in self.locations.locations_list.adapter.data:
+#                self.locations.locations_list.adapter.data.append(location)
+#                self.locations.locations_list._trigger_reset_populate()
+#                self.store.put("locations", locations=list(self.locations.locations_list.adapter.data), current_location=location)
+#        self.current_weather.location = location
+#        self.forecast.location = location
+#        self.current_weather.update_weather()
+#        self.forecast.update_weather()
+#        self.carousel.load_slide(self.current_weather)
+#        if self.add_location_form is not None:
+#            self.add_location_form.dismiss()
 
-    def show_add_location_form(self):
-        self.add_location_form = AddLocationForm()
-        self.add_location_form.open()
+#    def show_add_location_form(self):
+#        self.add_location_form = AddLocationForm()
+#        self.add_location_form.open()
 
 
 class AddLocationForm(ModalView):
@@ -123,6 +123,58 @@ class CurrentWeather(BoxLayout):
         self.temp = data['main']['temp']
         self.temp_min = data['main']['temp_min']
         self.temp_max = data['main']['temp_max']
+
+
+class WeatherPage(BoxLayout):
+    location = ListProperty(['New York', 'US'])
+    temp = NumericProperty()
+    forecast_panel = ObjectProperty()
+    
+    def __init__(self, location=None, **kargs):
+        super(WeatherPage, self).__init__(**kargs)
+        if location is not None:
+            self.location = location
+        self.update_weather_today()
+        self.update_weather_forecast()
+        
+    def update_weather_today(self):
+        config = WeatherApp.get_running_app().config
+        temp_type = config.getdefault("General", "temp_type", "metric").lower()
+        weather_template = ("http://api.openweathermap.org/data/2.5/" +
+            "weather?q={},{}&units={}")
+        weather_url = weather_template.format(self.location[0],
+                self.location[1], temp_type)
+        request = UrlRequest(weather_url, self.weather_retrived_today)
+
+    def weather_retrived_today(self, request, data):
+        data = json.loads(data.decode()) if not isinstance(data, dict) else data
+        self.conditions = data['weather'][0]['description']
+        self.temp = data['main']['temp']
+#        self.temp_min = data['main']['temp_min']
+#        self.temp_max = data['main']['temp_max']
+
+    def update_weather_forecast(self):
+        config = WeatherApp.get_running_app().config
+        temp_type = config.getdefault("General", "temp_type", "metric").lower()
+        weather_template = ("http://api.openweathermap.org/data/2.5/" +
+            "forecast/daily?q={},{}&units={}&cnt=7")
+        weather_url = weather_template.format(self.location[0],
+            self.location[1], temp_type)
+        request = UrlRequest(weather_url, self.weather_retrived_forecast)
+        
+    def weather_retrived_forecast(self, request, data):
+        data = json.loads(data.decode()) if not isinstance(data, dict) else data
+        self.forecast_panel.clear_widgets()
+        for day in data['list']:
+            box = Factory.ForecastBox()
+            box.date = \
+                datetime.datetime.fromtimestamp(day['dt']).strftime("%a %b %d")
+#            box.conditions = day['weather'][0]['description']
+            box.conditions_image = "http://openweathermap.org/img/w/{}.png".format(day['weather'][0]['icon'])
+            box.temp_day = day['temp']['day']
+#            box.temp_min = day['temp']['min']
+#            box.temp_max = day['temp']['max']
+            self.forecast_panel.add_widget(box)
 
 
 class WeatherApp(App):
