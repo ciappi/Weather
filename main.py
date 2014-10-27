@@ -45,6 +45,17 @@ class WeatherRoot(BoxLayout):
         else:
             Clock.schedule_once(lambda dt: self.show_add_location_form())
 
+    def update_weather(self):
+        for location in self.locations:
+            self.locations[location].update_weather()
+
+    def remove_location(self, location=None):
+        if location is None:
+            location = self.carousel.current_slide.location
+        location = tuple(location)
+        if location in self.locations:
+            self.carousel.remove_widget(self.locations.pop(location))
+
     def add_location(self, location=None):
         location = tuple(location)
         if location is not None:
@@ -111,6 +122,9 @@ class WeatherPage(BoxLayout):
         super(WeatherPage, self).__init__(**kargs)
         if location is not None:
             self.location = location
+        self.update_weather()
+
+    def update_weather(self):
         self.update_weather_today()
         self.update_weather_forecast()
         
@@ -187,29 +201,33 @@ class Forecast(BoxLayout):
 class WeatherApp(App):
     def build_config(self, config):
         config.setdefaults('General', {'temp_type': 'Metric'})
-        
+
     def on_pause(self):
         return True
-    
+
+    def open_settings(self, *largs):
+        pass
+
     def on_stop(self):
         self.root.store.put("locations", locations=list(self.root.locations.keys()),
             current_location=self.root.carousel.current_slide.location)
 
-    def build_settings(self, settings):
-        settings.add_json_panel("Weather Settings", self.config, data="""
-[
-    {"type": "options",
-     "title": "Temperature System",
-     "section": "General",
-     "key": "temp_type",
-     "options": ["Metric", "Imperial"]}
-]""")
+#    def build_settings(self, settings):
+#        settings.add_json_panel("Weather Settings", self.config, data="""
+#[
+#    {"type": "options",
+#     "title": "Temperature System",
+#     "section": "General",
+#     "key": "temp_type",
+#     "options": ["Metric", "Imperial"]}
+#]""")
 
     def on_config_change(self, config, section, key, value):
+        print("config changed\n\n\n\n")
         if config is self.config and key == "temp_type":
             try:
-                self.root.current_weather.update_weather()
-                self.root.forecast.update_weather()
+                for location in root.locations:
+                    location.update_weather()
             except AttributeError:
                 pass
 

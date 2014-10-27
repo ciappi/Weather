@@ -19,15 +19,18 @@ WeatherRoot:
                 on_press: app.root.show_add_location_form()
             ActionButton:
                 text: "-"
+                on_press: app.root.remove_location()
             ActionToggleButton:
                 status: "down"
                 text: "°C"
                 group: "unit"
                 allow_no_selection: False
+                on_press: app.config.set("General", "temp_type", "metric"); app.config.write(); root.update_weather()
             ActionToggleButton:
                 text: "°F"
                 group: "unit"
                 allow_no_selection: False
+                on_press: app.config.set("General", "temp_type", "imperial"); app.config.write(); root.update_weather()
     Carousel:
         id: carousel
 
