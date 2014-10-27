@@ -7,114 +7,63 @@ WeatherRoot:
 
 <WeatherRoot>:
     carousel: carousel
+    orientation: "vertical"
+    ActionBar:
+        ActionView:
+            use_separator: True
+            ActionPrevious:
+                title: "Weather"
+                with_previous: False
+            ActionButton:
+                text: "+"
+                on_press: app.root.show_add_location_form()
+            ActionButton:
+                text: "-"
+            ActionToggleButton:
+                status: "down"
+                text: "°C"
+                group: "unit"
+                allow_no_selection: False
+            ActionToggleButton:
+                text: "°F"
+                group: "unit"
+                allow_no_selection: False
     Carousel:
         id: carousel
-
-
-<ForecastLabel@BoxLayout>:
-    date: ""
-    conditions_image: ""
-    conditions: ""
-    temp_min: None
-    temp_max: None
-    canvas.before:
-        Color:
-            rgb: [0.2, 0.2, 0.2]
-        Line:
-            points: [self.pos[0], self.pos[1], self.width, self.pos[1]]
-    Label:
-        text: root.date
-    BoxLayout:
-        orientation: "vertical"
-        AsyncImage:
-            source: root.conditions_image
-        Label:
-            text: root.conditions
-    BoxLayout:
-        orientation: "vertical"
-        Label:
-            text: "Low {}".format(root.temp_min)
-        Label:
-            text: "High {}".format(root.temp_max)
-
-
-<Forecast>:
-    forecast_container: forecast_container
-    orientation: "vertical"
-    Label:
-        size_hint_y: 0.1
-        font_size: "30dp"
-        text: "{} ({})".format(root.location[0], root.location[1])
-    BoxLayout:
-        orientation: "vertical"
-        id: forecast_container
-
-
-<Locations@BoxLayout>:
-    orientation: "vertical"
-    locations_list: locations_list
-    ListView:
-        id: locations_list
-        adapter:
-            ListAdapter(data=[], cls=main.LocationButton, args_converter=main.locations_args_converter)
 
 
 <LocationButton>:
     text: "{} ({})".format(self.location[0], self.location[1])
     height: "40dp"
     size_hint_y: None 
-    on_press: app.root.change_location(self.location)
+    on_press: app.root.add_location(self.location)
 
 
 <AddLocationForm>:
     search_input: search_box
     search_results: search_results_list
-    BoxLayout:
-        orientation: "vertical"
-        BoxLayout:
-            height: "40dp"
-            size_hint_y: None
-            TextInput:
-                id: search_box
-                size_hint_x: 50
-                focus: True
-                multiline: False
-                on_text_validate: root.search_location()
-            Button:
-                text: "Search"
-                size_hint_x: 25
-                on_press: root.search_location()
-            Button:
-                text: "Current Location"
-                size_hint_x: 25
-                on_press: root.search_coordinates()
-        ListView:
-            id: search_results_list
-            adapter:
-                ListAdapter(data=[], cls=main.LocationButton, args_converter=main.locations_args_converter)
-        Button:
-            height: "40dp"
-            size_hint_y: None
-            text: "Cancel"
-            on_press: root.dismiss()
-
-
-<CurrentWeather>:
     orientation: "vertical"
     BoxLayout:
-        Label:
-            text: "{} ({})".format(root.location[0], root.location[1])
-            font_size: "30dp"
-        Label:
-            text: "{}".format(root.temp)
-    Label:
-        text: root.conditions
-    BoxLayout:
-        orientation: "horizontal"
-        Label:
-            text: "Low: {}".format(root.temp_min)
-        Label:
-            text: "High: {}".format(root.temp_max)
+        height: "40dp"
+        size_hint_y: None
+        TextInput:
+            id: search_box
+            size_hint_x: 90
+            focus: True
+            multiline: False
+            on_text_validate: root.search_location()
+        Button:
+            text: "S"
+            size_hint_x: 5
+            on_press: root.search_location()
+        Button:
+            text: "GPS"
+            size_hint_x: 5
+            on_press: root.search_coordinates()
+    ListView:
+        id: search_results_list
+        adapter:
+            ListAdapter(data=[], cls=main.LocationButton, args_converter=main.locations_args_converter)
 
 
 <WeatherPage>:
@@ -133,7 +82,7 @@ WeatherRoot:
     BoxLayout:
         id: forecast_panel
         orientation: "horizontal"
-    
+
 
 
 <ForecastBox@BoxLayout>:
