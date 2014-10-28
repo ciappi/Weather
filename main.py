@@ -54,6 +54,10 @@ class WeatherRoot(BoxLayout):
             location = self.carousel.current_slide.location
         location = tuple(location)
         if location in self.locations:
+#            if self.carousel.previous_slide is None:
+#                self.carousel.load_next()
+#            else:
+#                self.carousel.load_previous()
             self.carousel.remove_widget(self.locations.pop(location))
 
     def add_location(self, location=None):
@@ -68,7 +72,7 @@ class WeatherRoot(BoxLayout):
             self.add_location_form.dismiss()
 
     def show_add_location_form(self):
-        self.add_location_form = Popup(title="Add Location...", size_hint=(.8,.8), 
+        self.add_location_form = Popup(title="Add Location...", size_hint=(.8,.6), 
             content=AddLocationForm())
         self.add_location_form.open()
 
@@ -117,6 +121,11 @@ class WeatherPage(BoxLayout):
     temp = NumericProperty()
     forecast_panel = ObjectProperty()
     condition_image = StringProperty()
+    conditions = StringProperty()
+    temp_min = NumericProperty()
+    temp_max = NumericProperty()
+    humidity = NumericProperty()
+    pressure = NumericProperty()
     
     def __init__(self, location=None, **kargs):
         super(WeatherPage, self).__init__(**kargs)
@@ -139,12 +148,15 @@ class WeatherPage(BoxLayout):
 
     def weather_retrived_today(self, request, data):
         data = json.loads(data.decode()) if not isinstance(data, dict) else data
-        self.conditions = data['weather'][0]['description']
+        conditions = data['weather'][0]['description']
+        self.conditions = conditions[0].upper() + conditions[1:].lower()
         self.temp = data['main']['temp']
         self.condition_image = "http://openweathermap.org/img/w/{}.png".format(data['weather'][0]['icon'])
 #        self.condition_image = "./imgs/{}.png".format(data['weather'][0]['icon'])
-#        self.temp_min = data['main']['temp_min']
-#        self.temp_max = data['main']['temp_max']
+        self.temp_min = data['main']['temp_min']
+        self.temp_max = data['main']['temp_max']
+        self.humidity = data['main']['humidity']
+        self.pressure = data['main']['pressure']
 
     def update_weather_forecast(self):
         config = WeatherApp.get_running_app().config
@@ -211,25 +223,6 @@ class WeatherApp(App):
     def on_stop(self):
         self.root.store.put("locations", locations=list(self.root.locations.keys()),
             current_location=self.root.carousel.current_slide.location)
-
-#    def build_settings(self, settings):
-#        settings.add_json_panel("Weather Settings", self.config, data="""
-#[
-#    {"type": "options",
-#     "title": "Temperature System",
-#     "section": "General",
-#     "key": "temp_type",
-#     "options": ["Metric", "Imperial"]}
-#]""")
-
-    def on_config_change(self, config, section, key, value):
-        print("config changed\n\n\n\n")
-        if config is self.config and key == "temp_type":
-            try:
-                for location in root.locations:
-                    location.update_weather()
-            except AttributeError:
-                pass
 
 
 if __name__ == '__main__':

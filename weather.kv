@@ -21,7 +21,7 @@ WeatherRoot:
                 text: "-"
                 on_press: app.root.remove_location()
             ActionToggleButton:
-                status: "down"
+                state: "down"
                 text: "°C"
                 group: "unit"
                 allow_no_selection: False
@@ -73,19 +73,30 @@ WeatherRoot:
     orientation: "vertical"
     forecast_panel: forecast_panel
     condition_image: ""
+    conditions: ""
     Label:
         text: "{} ({})".format(root.location[0], root.location[1])
         font_size: "50dp"
-    AsyncImage:
-        source: root.condition_image
-        allow_stretch: True
     Label:
         text: "{:.0f}".format(root.temp)
         font_size: "80dp"
     BoxLayout:
+        orientation: "horizontal"
+        BoxLayout:
+            orientation: "vertical"
+            Label:
+                text: "{}".format(root.conditions)
+                font_size: "20dp"
+            AsyncImage:
+                source: root.condition_image
+                allow_stretch: False
+        Label:
+            text: "Temp min: {:.0f}\nTemp max: {:.0f}\nHumidity: {:.0f} %\nPressure: {:.0f} hPa".format(root.temp_min, root.temp_max, root.humidity, root.pressure)
+    Label:
+        size_hint_y: .3
+    BoxLayout:
         id: forecast_panel
         orientation: "horizontal"
-
 
 
 <ForecastBox@BoxLayout>:
