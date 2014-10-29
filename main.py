@@ -138,12 +138,10 @@ class WeatherPage(BoxLayout):
         self.update_weather_forecast()
         
     def update_weather_today(self):
-        config = WeatherApp.get_running_app().config
-        temp_type = config.getdefault("General", "temp_type", "metric").lower()
         weather_template = ("http://api.openweathermap.org/data/2.5/" +
             "weather?q={},{}&units={}")
         weather_url = weather_template.format(self.location[0],
-                self.location[1], temp_type)
+                self.location[1], 'metric')
         request = UrlRequest(weather_url, self.weather_retrived_today)
 
     def weather_retrived_today(self, request, data):
@@ -152,19 +150,16 @@ class WeatherPage(BoxLayout):
         self.conditions = conditions[0].upper() + conditions[1:].lower()
         self.temp = data['main']['temp']
         self.condition_image = "http://openweathermap.org/img/w/{}.png".format(data['weather'][0]['icon'])
-#        self.condition_image = "./imgs/{}.png".format(data['weather'][0]['icon'])
         self.temp_min = data['main']['temp_min']
         self.temp_max = data['main']['temp_max']
         self.humidity = data['main']['humidity']
         self.pressure = data['main']['pressure']
 
     def update_weather_forecast(self):
-        config = WeatherApp.get_running_app().config
-        temp_type = config.getdefault("General", "temp_type", "metric").lower()
         weather_template = ("http://api.openweathermap.org/data/2.5/" +
             "forecast/daily?q={},{}&units={}&cnt=7")
         weather_url = weather_template.format(self.location[0],
-            self.location[1], temp_type)
+            self.location[1], 'metric')
         request = UrlRequest(weather_url, self.weather_retrived_forecast)
         
     def weather_retrived_forecast(self, request, data):
@@ -174,12 +169,9 @@ class WeatherPage(BoxLayout):
             box = Factory.ForecastBox()
             box.date = \
                 datetime.datetime.fromtimestamp(day['dt']).strftime("%a %b %d")
-#            box.conditions = day['weather'][0]['description']
             box.conditions_image = "http://openweathermap.org/img/w/{}.png".format(day['weather'][0]['icon'])
-#            box.conditions_image = "./imgs/{}.png".format(day['weather'][0]['icon'])
-            box.temp_day = day['temp']['day']
-#            box.temp_min = day['temp']['min']
-#            box.temp_max = day['temp']['max']
+            box.temp_min = day['temp']['min']
+            box.temp_max = day['temp']['max']
             self.forecast_panel.add_widget(box)
 
 
@@ -188,12 +180,10 @@ class Forecast(BoxLayout):
     forecast_container = ObjectProperty()
     
     def update_weather(self):
-        config = WeatherApp.get_running_app().config
-        temp_type = config.getdefault("General", "temp_type", "metric").lower()
         weather_template = ("http://api.openweathermap.org/data/2.5/" +
             "forecast/daily?q={},{}&units={}&cnt=3")
         weather_url = weather_template.format(self.location[0],
-            self.location[1], temp_type)
+            self.location[1], 'metric')
         request = UrlRequest(weather_url, self.weather_retrived)
         
     def weather_retrived(self, request, data):
@@ -211,8 +201,6 @@ class Forecast(BoxLayout):
 
 
 class WeatherApp(App):
-    def build_config(self, config):
-        config.setdefaults('General', {'temp_type': 'Metric'})
 
     def on_pause(self):
         return True
