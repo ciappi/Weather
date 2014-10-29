@@ -5,11 +5,11 @@ from kivy.app import App
 from kivy.clock import Clock
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.listview import ListItemButton
-from kivy.properties import ObjectProperty, ListProperty, StringProperty, NumericProperty
+from kivy.properties import (ObjectProperty, ListProperty,
+                             StringProperty, NumericProperty)
 from kivy.network.urlrequest import UrlRequest
 from kivy.storage.jsonstore import JsonStore
 from kivy.factory import Factory
-from kivy.uix.modalview import ModalView
 from kivy.uix.popup import Popup
 
 
@@ -66,14 +66,17 @@ class WeatherRoot(BoxLayout):
             if location not in self.locations:
                 self.locations[location] = WeatherPage(location)
                 self.carousel.add_widget(self.locations[location])
-                self.store.put("locations", locations=list(self.locations.keys()), current_location=location)
+                self.store.put("locations",
+                               locations=list(self.locations.keys()),
+                               current_location=location)
         self.carousel.load_slide(self.locations[location])
         if self.add_location_form is not None:
             self.add_location_form.dismiss()
 
     def show_add_location_form(self):
-        self.add_location_form = Popup(title="Add Location...", size_hint=(.8,.6), 
-            content=AddLocationForm())
+        self.add_location_form = Popup(title="Add Location...",
+                                       size_hint=(.8, .6),
+                                       content=AddLocationForm())
         self.add_location_form.open()
 
 
@@ -84,7 +87,7 @@ class AddLocationForm(BoxLayout):
 
     def search_location(self):
         search_template = ("http://api.openweathermap.org/data/2.5/" +
-                "find?q={}&type=like")
+                           "find?q={}&type=like")
         search_url = search_template.format(self.search_input.text)
         request = UrlRequest(search_url, self.found_location)
 
@@ -104,7 +107,7 @@ class AddLocationForm(BoxLayout):
         data = json.loads(data.decode()) if not isinstance(data, dict) else data
         if 'list' in data:
             cities = [(d['name'], d['sys']['country'])
-                     for d in data['list']]
+                      for d in data['list']]
         else:
             cities = []
         self.search_results.item_strings = cities
@@ -126,7 +129,7 @@ class WeatherPage(BoxLayout):
     temp_max = NumericProperty()
     humidity = NumericProperty()
     pressure = NumericProperty()
-    
+
     def __init__(self, location=None, **kargs):
         super(WeatherPage, self).__init__(**kargs)
         if location is not None:
@@ -136,12 +139,12 @@ class WeatherPage(BoxLayout):
     def update_weather(self):
         self.update_weather_today()
         self.update_weather_forecast()
-        
+
     def update_weather_today(self):
         weather_template = ("http://api.openweathermap.org/data/2.5/" +
-            "weather?q={},{}&units={}")
+                            "weather?q={},{}&units={}")
         weather_url = weather_template.format(self.location[0],
-                self.location[1], 'metric')
+                                              self.location[1], 'metric')
         request = UrlRequest(weather_url, self.weather_retrived_today)
 
     def weather_retrived_today(self, request, data):
@@ -157,11 +160,11 @@ class WeatherPage(BoxLayout):
 
     def update_weather_forecast(self):
         weather_template = ("http://api.openweathermap.org/data/2.5/" +
-            "forecast/daily?q={},{}&units={}&cnt=7")
+                            "forecast/daily?q={},{}&units={}&cnt=7")
         weather_url = weather_template.format(self.location[0],
-            self.location[1], 'metric')
+                                              self.location[1], 'metric')
         request = UrlRequest(weather_url, self.weather_retrived_forecast)
-        
+
     def weather_retrived_forecast(self, request, data):
         data = json.loads(data.decode()) if not isinstance(data, dict) else data
         self.forecast_panel.clear_widgets()
@@ -178,14 +181,14 @@ class WeatherPage(BoxLayout):
 class Forecast(BoxLayout):
     location = ListProperty(['New York', 'US'])
     forecast_container = ObjectProperty()
-    
+
     def update_weather(self):
         weather_template = ("http://api.openweathermap.org/data/2.5/" +
-            "forecast/daily?q={},{}&units={}&cnt=3")
+                            "forecast/daily?q={},{}&units={}&cnt=3")
         weather_url = weather_template.format(self.location[0],
-            self.location[1], 'metric')
+                                              self.location[1], 'metric')
         request = UrlRequest(weather_url, self.weather_retrived)
-        
+
     def weather_retrived(self, request, data):
         data = json.loads(data.decode()) if not isinstance(data, dict) else data
         self.forecast_container.clear_widgets()
@@ -209,8 +212,9 @@ class WeatherApp(App):
         pass
 
     def on_stop(self):
-        self.root.store.put("locations", locations=list(self.root.locations.keys()),
-            current_location=self.root.carousel.current_slide.location)
+        self.root.store.put("locations",
+                            locations=list(self.root.locations.keys()),
+                            current_location=self.root.carousel.current_slide.location)
 
 
 if __name__ == '__main__':
