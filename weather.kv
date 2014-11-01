@@ -18,17 +18,14 @@ WeatherRoot:
             ActionButton:
                 text: "+"
                 icon: "imgs/add.png"
-                font_size: "20dp"
                 on_press: app.root.show_add_location_form()
             ActionButton:
                 text: "-"
                 icon: "imgs/trash.png"
-                font_size: "20dp"
                 on_press: app.root.remove_location()
             ActionButton:
                 text: "r"
                 icon: "imgs/refresh.png"
-                font_size: "20dp"
                 on_press: app.root.update_weather()
     Carousel:
         id: carousel
@@ -75,20 +72,22 @@ WeatherRoot:
     conditions: ""
     Label:
         text: "{} ({})".format(root.location[0], root.location[1])
-        font_size: "50dp"
-    Label:
-        text: "{:.0f} °C".format(root.temp)
-        font_size: "80dp"
-    Label:
-        text: "{}".format(root.conditions)
-        font_size: "20dp"
+        font_size: "30dp"
     BoxLayout:
         orientation: "horizontal"
-        AsyncImage:
-            source: root.condition_image
-            allow_stretch: False
         Label:
-            text: "Temp min: {:.0f} °C\nTemp max: {:.0f} °C\nHumidity: {:.0f} %\nPressure: {:.0f} hPa".format(root.temp_min, root.temp_max, root.humidity, root.pressure)
+            text: "{:.0f} °C".format(root.temp)
+            font_size: "50dp"
+        BoxLayout:
+            orientation: "vertical"
+            Label:
+                text: "{}".format(root.conditions)
+                font_size: "16dp"
+            AsyncImage:
+                source: root.condition_image
+                allow_stretch: False
+#        Label:
+#            text: "Temp min: {:.0f} °C\nTemp max: {:.0f} °C\nHumidity: {:.0f} %\nPressure: {:.0f} hPa".format(root.temp_min, root.temp_max, root.humidity, root.pressure)
     Label:
         size_hint_y: .3
     BoxLayout:

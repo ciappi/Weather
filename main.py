@@ -13,7 +13,7 @@ from kivy.factory import Factory
 from kivy.uix.popup import Popup
 
 
-__version__ = "0.2dev"
+__version__ = "0.2"
 
 
 def locations_args_converter(index, data_item):
@@ -160,7 +160,7 @@ class WeatherPage(BoxLayout):
 
     def update_weather_forecast(self):
         weather_template = ("http://api.openweathermap.org/data/2.5/" +
-                            "forecast/daily?q={},{}&units={}&cnt=7")
+                            "forecast/daily?q={},{}&units={}&cnt=3")
         weather_url = weather_template.format(self.location[0],
                                               self.location[1], 'metric')
         request = UrlRequest(weather_url, self.weather_retrived_forecast)
