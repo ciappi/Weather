@@ -205,6 +205,9 @@ class Forecast(BoxLayout):
 
 class WeatherApp(App):
 
+    def build(self):
+        self.icon = "imgs/icon.png"
+
     def on_pause(self):
         return True
 
