@@ -1,10 +1,10 @@
 [app]
 
 # (str) Title of your application
-title = Weather
+title = KWeather
 
 # (str) Package name
-package.name = weather
+package.name = kweather
 
 # (str) Package domain (needed for android/ios packaging)
 package.domain = org.test

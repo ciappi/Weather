@@ -205,7 +205,7 @@ class Forecast(BoxLayout):
             self.forecast_container.add_widget(label)
 
 
-class WeatherApp(App):
+class KWeatherApp(App):
 
     def build(self):
         self.icon = "imgs/icon.png"
@@ -223,4 +223,4 @@ class WeatherApp(App):
 
 
 if __name__ == '__main__':
-    WeatherApp().run()
+    KWeatherApp().run()
