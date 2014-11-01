@@ -152,7 +152,8 @@ class WeatherPage(BoxLayout):
         conditions = data['weather'][0]['description']
         self.conditions = conditions[0].upper() + conditions[1:].lower()
         self.temp = data['main']['temp']
-        self.condition_image = "http://openweathermap.org/img/w/{}.png".format(data['weather'][0]['icon'])
+#        self.condition_image = "http://openweathermap.org/img/w/{}.png".format(data['weather'][0]['icon'])
+        self.condition_image = "./imgs/{}.png".format(data['weather'][0]['icon'])
         self.temp_min = data['main']['temp_min']
         self.temp_max = data['main']['temp_max']
         self.humidity = data['main']['humidity']
@@ -172,7 +173,8 @@ class WeatherPage(BoxLayout):
             box = Factory.ForecastBox()
             box.date = \
                 datetime.datetime.fromtimestamp(day['dt']).strftime("%a %b %d")
-            box.conditions_image = "http://openweathermap.org/img/w/{}.png".format(day['weather'][0]['icon'])
+#            box.conditions_image = "http://openweathermap.org/img/w/{}.png".format(day['weather'][0]['icon'])
+            box.conditions_image = "./imgs/{}.png".format(day['weather'][0]['icon'])
             box.temp_min = day['temp']['min']
             box.temp_max = day['temp']['max']
             self.forecast_panel.add_widget(box)
