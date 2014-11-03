@@ -66,10 +66,10 @@ WeatherRoot:
 
 
 <WeatherPage>:
-    orientation: "vertical"
     forecast_panel: forecast_panel
     condition_image: ""
     conditions: ""
+    orientation: "vertical"
     Label:
         text: "{} ({})".format(root.location[0], root.location[1])
         font_size: "30dp"
@@ -86,6 +86,7 @@ WeatherRoot:
             AsyncImage:
                 source: root.condition_image
                 allow_stretch: False
+                mipmap: True
 #        Label:
 #            text: "Temp min: {:.0f} °C\nTemp max: {:.0f} °C\nHumidity: {:.0f} %\nPressure: {:.0f} hPa".format(root.temp_min, root.temp_max, root.humidity, root.pressure)
     Label:
@@ -105,5 +106,6 @@ WeatherRoot:
         text: "{}".format(root.date)
     AsyncImage:
         source: root.conditions_image
+        mipmap: True
     Label:
         text: "{:.0f} °C / {:.0f} °C".format(root.temp_min, root.temp_max)
