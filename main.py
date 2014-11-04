@@ -11,11 +11,32 @@ from kivy.network.urlrequest import UrlRequest
 from kivy.storage.jsonstore import JsonStore
 from kivy.factory import Factory
 from kivy.uix.popup import Popup
-from kivy.graphics import Rectangle
+from kivy.graphics import Rectangle, Color
 from kivy.uix.image import Image
 
 
 __version__ = "0.2"
+
+BG_MAP = {
+    '01d': 'sunshine.jpg',
+    '01n': 'moon.jpg',
+    '02d': 'sun_cloud.jpg',
+    '02n': 'moon_cloud.jpg',
+    '03d': 'cloud.jpg',
+    '03n': 'moon_cloud.jpg',
+    '04d': 'cloud.jpg',
+    '04n': 'moon_cloud.jpg',
+    '09d': 'rain.jpg',
+    '09n': 'rain_night.jpg',
+    '10d': 'rain.jpg',
+    '10n': 'rain_night.jpg',
+    '11d': 'rain.jpg',
+    '11n': 'rain_night.jpg',
+    '13d': 'snow.jpg',
+    '13n': 'snow_night.jpg',
+    '50d': 'mist.jpg',
+    '50n': 'mist.jpg',
+}
 
 
 def locations_args_converter(index, data_item):
@@ -131,7 +152,7 @@ class WeatherPage(BoxLayout):
     temp_max = NumericProperty()
     humidity = NumericProperty()
     pressure = NumericProperty()
-    bg_img = StringProperty('./imgs/rain_r.jpg')
+    bg_img = StringProperty('')
 
     def __init__(self, location=None, **kargs):
         super(WeatherPage, self).__init__(**kargs)
@@ -147,7 +168,7 @@ class WeatherPage(BoxLayout):
 
     def _update_rect(self, *args):
         if self.bg_img:
-            texture = Image(source=self.bg_img).texture
+            texture = Image(source='imgs/' + self.bg_img).texture
             r_w, r_h = self.size
             self.rect.pos = self.pos
             self.rect.size = self.size
@@ -173,6 +194,7 @@ class WeatherPage(BoxLayout):
         self.temp = data['main']['temp']
 #        self.condition_image = "http://openweathermap.org/img/w/{}.png".format(data['weather'][0]['icon'])
         self.condition_image = "./imgs/{}.png".format(data['weather'][0]['icon'])
+        self.bg_img = BG_MAP[data['weather'][0]['icon']]
         self.temp_min = data['main']['temp_min']
         self.temp_max = data['main']['temp_max']
         self.humidity = data['main']['humidity']
