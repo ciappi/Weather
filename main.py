@@ -11,6 +11,8 @@ from kivy.network.urlrequest import UrlRequest
 from kivy.storage.jsonstore import JsonStore
 from kivy.factory import Factory
 from kivy.uix.popup import Popup
+from kivy.graphics import Rectangle
+from kivy.uix.image import Image
 
 
 __version__ = "0.2"
@@ -129,12 +131,29 @@ class WeatherPage(BoxLayout):
     temp_max = NumericProperty()
     humidity = NumericProperty()
     pressure = NumericProperty()
+    bg_img = StringProperty('./imgs/rain_r.jpg')
 
     def __init__(self, location=None, **kargs):
         super(WeatherPage, self).__init__(**kargs)
         if location is not None:
             self.location = location
         self.update_weather()
+        with self.canvas.before:
+            self.rect = Rectangle(pos=self.pos, size=self.size)
+        self.bind(pos=self._update_rect)
+        self.bind(size=self._update_rect)
+        self.bind(bg_img=self._update_rect)
+        self._update_rect()
+
+    def _update_rect(self, *args):
+        if self.bg_img:
+            texture = Image(source=self.bg_img).texture
+            r_w, r_h = self.size
+            self.rect.pos = self.pos
+            self.rect.size = self.size
+            t_w, t_h = texture.size
+            coord = t_w//2 - r_w//2, t_h//2 - r_h//2, r_w, r_h
+            self.rect.texture = texture.get_region(*coord)
 
     def update_weather(self):
         self.update_weather_today()
